@@ -12,6 +12,20 @@ Follow the steps below to start the API server:
     ```sh
     $ pip install -r requirements.txt
     ```
+  - Set up Mysql Database
+    '''sh
+    $ mysql -u root -p
+    '''
+    '''sh
+    mysql> CREATE DATABASE kryptos CHARACTER SET UTF8;
+    mysql> CREATE USER excel@localhost IDENTIFIED BY 'password';
+    mysql> GRANT ALL PRIVILEGES ON kryptos.* TO excel@localhost;
+    mysql> exit
+    '''
+    '''sh
+    $ mysql -u excel -p kryptos < kryptos.sql
+    '''
+
   - Run the dev server
     ```sh
     $ python manage.py makemigrations

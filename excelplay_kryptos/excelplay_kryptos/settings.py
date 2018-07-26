@@ -77,8 +77,19 @@ WSGI_APPLICATION = 'excelplay_kryptos.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'kryptos',
+        'USER': 'excel',
+        'PASSWORD': 'password',
+        'HOST': '',
+        'PORT': '',
+
+        #Disable mysql strict mode
+        # 'OPTIONS': {
+        #     'init_command': "SET sql_mode=''",}
     }
 }
 
