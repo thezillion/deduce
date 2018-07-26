@@ -13,7 +13,7 @@ Follow the steps below to start the API server:
     $ pip install -r requirements.txt
     ```
   - Set up Mysql Database
-    '''sh
+    ```sh
     $ mysql -u root -p
     '''
     '''sh
