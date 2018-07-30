@@ -5,6 +5,7 @@ from .models import Level, KryptosUser
 from .serializers import UserSerializer,ChangePasswordSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import PasswordResetForm
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import AllowAny
 from rest_framework.generics import CreateAPIView, UpdateAPIView
@@ -88,14 +89,29 @@ class ChangePasswordView(UpdateAPIView):
             new_password = serializer.data.get("new_password")
             self.object.set_password(new_password)
             self.object.save()
-            return Response("Success.", status=status.HTTP_200_OK)
+            return Response("success", status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+@permission_classes((AllowAny,))
+def password_reset(request):
+    email = request.data['email']
+    print(request.data)
+
+    if len(User.objects.filter(email=email)) != 0:
+        form = PasswordResetForm(request.data)
+        assert form.is_valid()
+        form.save(request=request, from_email="kryptos@excelmec.org", email_template_name='registration/password_reset_email.html')
+        return Response('success')
+    return Response('Email id not registered', status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['GET'])
 def test(request):
+    print(request)
     user = User.objects.get(username = request.user.username)
-    response = {'success': True, 'username':user.username}
+    response = {'success': True, 'username':user.username,'a':request.site}
     return JsonResponse(response)
 
 @api_view(['GET'])

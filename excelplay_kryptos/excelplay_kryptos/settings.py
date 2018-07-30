@@ -15,6 +15,8 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+BASE_URL = "kryptos.excelmec.org"
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -141,5 +143,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # During development only
+# TODO Set up an email provider during production
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'abinmn'
+EMAIL_HOST_PASSWORD = '93iA86q52s4m'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'Kryptos <noreply@excelmec.org>'
 
 LOGIN_REDIRECT_URL = '/'
