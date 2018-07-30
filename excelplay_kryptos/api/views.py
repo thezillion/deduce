@@ -36,14 +36,18 @@ def login_user(request):
     """
     user login endpoint
     """
-    username = request.data['username']
-    password = request.data['password']
-    user = authenticate(username=username,password=password)
-    if user is not None:
-        if user.is_active:
-            login(request, user)
-            return Response({'login':True})
-    return Response({'login':False})
+    try:
+        email = request.data['email']
+        password = request.data['password']
+        username  = User.objects.get(email=email).username
+        user = authenticate(username=username,password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return Response({'login':True})
+        return Response({'login':False}, status=status.HTTP_401_UNAUTHORIZED)
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def logout_user(request):
@@ -89,23 +93,25 @@ class ChangePasswordView(UpdateAPIView):
             new_password = serializer.data.get("new_password")
             self.object.set_password(new_password)
             self.object.save()
-            return Response("success", status=status.HTTP_200_OK)
+            return Response({"password":["changed"]}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def password_reset(request):
-    email = request.data['email']
-    print(request.data)
+    try:
+        email = request.data['email']
+        print(request.data)
 
-    if len(User.objects.filter(email=email)) != 0:
-        form = PasswordResetForm(request.data)
-        assert form.is_valid()
-        form.save(request=request, from_email="kryptos@excelmec.org", email_template_name='registration/password_reset_email.html')
-        return Response('success')
-    return Response('Email id not registered', status=status.HTTP_400_BAD_REQUEST)
-
+        if len(User.objects.filter(email=email)) != 0:
+            form = PasswordResetForm(request.data)
+            assert form.is_valid()
+            form.save(request=request, from_email="kryptos@excelmec.org", email_template_name='registration/password_reset_email.html')
+            return Response('success')
+        return Response('Email id not registered', status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return Response('Email id not registered', status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def test(request):
@@ -148,8 +154,8 @@ def answer(request):
             response = {'answer': 'Correct'}
         else:
             response = {'answer': 'Wrong'}
+        return Response(response)
     except Exception as e:
         print (e)
         response = {'error': 'User not found'}
-    finally:
-        return Response(response)
+        return Response(response, status=status.HTTP_401_UNAUTHORIZED)

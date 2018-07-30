@@ -21,8 +21,7 @@ Follow the steps below to start the API server:
     mysql> GRANT ALL PRIVILEGES ON kryptos.* TO excel@localhost;
     mysql> exit
 
-    $ mysql -u excel -p kryptos < kryptos.sql
-    '''
+    ```
 
   - Run the dev server
     ```sh
@@ -31,3 +30,5 @@ Follow the steps below to start the API server:
     $ python manage.py createsuperuser
     $ python manage.py runserver
     ```
+
+      

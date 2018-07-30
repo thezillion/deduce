@@ -11,8 +11,8 @@ class UserSerializer(serializers.ModelSerializer):
     """
     password = serializers.CharField(write_only=True)
     email = serializers.EmailField(required=True)
-    #first_name = serializers.CharField(required=True)
-    #last_name = serializers.CharField(required=True)
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
 
     def validate(self, data):
         user = User(**data)
