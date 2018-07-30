@@ -25,7 +25,7 @@ SECRET_KEY = 'pj1htzgm1y_@0sc_nnpjzz=$)0b5&ccq1i_g+p_1m3d%sb#ta+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-     'rest_framework.authtoken',
     'api',
 ]
 
@@ -69,6 +68,15 @@ TEMPLATES = [
         },
     },
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
 
 WSGI_APPLICATION = 'excelplay_kryptos.wsgi.application'
 
@@ -132,5 +140,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
 
 LOGIN_REDIRECT_URL = '/'
