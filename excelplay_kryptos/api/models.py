@@ -1,15 +1,18 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your models here.
 
-class User(models.Model):
-	user_id = models.CharField(primary_key=True,max_length=100)
-	username = models.CharField(max_length=100)
-	profile_picture = models.URLField()
-	email = models.EmailField()
-	
-	def __str__(self):
-		return self.username
+# class User(models.Model):
+# 	user_id = models.CharField(primary_key=True,max_length=100)
+# 	username = models.CharField(max_length=100)
+# 	profile_picture = models.URLField()
+# 	email = models.EmailField()
+#
+# 	def __str__(self):
+# 		return self.username
 
 class Level(models.Model):
     #options = (
@@ -26,10 +29,15 @@ class Level(models.Model):
 		return str(self.level)
 
 class KryptosUser(models.Model):
-    # TODO: Bring user ID from auth
-    user_id = models.OneToOneField(User,primary_key=True, on_delete=models.CASCADE)
-    level = models.IntegerField(default=1)
-    rank = models.IntegerField(default=10000)
+	user_id = models.OneToOneField(User,primary_key=True, on_delete=models.CASCADE)
+	level = models.IntegerField(default=1)
+	rank = models.IntegerField(default=10000)
 
-    def __str__(self):
-        return str(self.rank)
+	@receiver(post_save, sender=User)
+	def build_kryptos_user_model(sender, instance, created, **kwargs):
+		if created:
+			kryptos = KryptosUser(user_id=instance)
+			kryptos.save()
+
+			def __str__(self):
+				return str(self.rank)
