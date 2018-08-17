@@ -1,42 +1,99 @@
+from django.conf import settings
+
 from django.shortcuts import render
 from django.http import JsonResponse
 from .models import Level, KryptosUser, User
+from .serializers import SocialSerializer
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import authenticate, login, logout
 
+from requests.exceptions import HTTPError
+from rest_framework import status, serializers
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
-from rest_framework import status
-from rest_framework.decorators import api_view
-
+from social_django.utils import psa
 # Create your views here.
 
+@api_view(http_method_names=['POST'])
+@permission_classes([AllowAny])
+@psa()
+def exchange_token(request, backend):
+
+    serializer = SocialSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        try:
+            nfe = settings.NON_FIELD_ERRORS_KEY
+        except AttributeError:
+            nfe = 'non_field_errors'
+
+        try:
+            user = request.backend.do_auth(serializer.validated_data['access_token'])
+        except HTTPError as e:
+            return Response(
+                {'errors': {
+                    'token': 'Invalid token',
+                    'detail': str(e),
+                }},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if user:
+            if user.is_active:
+                # token, _ = Token.objects.get_or_create(user=user)
+                # return Response({'token': token.key})
+                login(request=request, user=user)
+                return Response({'login':True})
+            else:
+                return Response(
+                    {'errors': {nfe: 'This user account is inactive'}},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        else:
+            return Response(
+                {'errors': {nfe: "Authentication Failed"}},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 def test(request):
-    response = {'success': True}
+    response = {'success': request.user.email}
     return JsonResponse(response)
 
 @api_view(['GET'])
+def profile(request):
+    first_name = request.user.first_name
+    last_name = request.user.last_name
+    email = request.user.email
+
+    return Response({'first name':first_name,
+    'last name':last_name,
+    'email':email})
+
+@api_view(['GET'])
 def ask(request):
-    
+
     # TODO: Fetch user level from DB
-    user_level = 1
-    level = Level.objects.filter(level=user_level)[0]
-    response = {
-        'level': user_level,
-        'source_hint': level.source_hint
-    }
-    return JsonResponse(response)
+    user_level = KryptosUser.objects.get(user_id=request.user.id).level
+    try:
+        level = Level.objects.filter(level=user_level)[0]
+        response = {
+            'level': user_level,
+            'source_hint': level.source_hint
+        }
+        return Response(response)
+    except:
+        return Response({"level":"finished"})
 
 @csrf_exempt
 @api_view(['POST'])
 def answer(request):
-    user_id = request.data['user_id']
     answer = request.data['answer']
     try:
-        user = User.objects.get(user_id=user_id)
+        user = User.objects.get(id=request.user.id)
         kuser = KryptosUser.objects.get(user_id=user)
         level = Level.objects.get(level=kuser.level)
         if answer == level.answer:
-            print(user, " answered level ", kuser.level, " correctly.")
             kuser.level += 1
             kuser.save()
             response = {'answer': 'Correct'}
@@ -45,5 +102,5 @@ def answer(request):
     except Exception as e:
         print (e)
         response = {'error': 'User not found'}
-    finally:  
-        return JsonResponse(response)
+    finally:
+        return Response(response)
