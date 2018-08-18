@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'api',
     'social_django',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -53,7 +54,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'excelplay_kryptos.urls'
 
@@ -134,7 +137,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "515285485076-3dcier9qalkst9pc830p8kskj94k4qgh.a
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "-x4mkRdOxCgE0WBflW2Pn5cQ"
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email', 'profile']
-SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email']
+SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email', 'profile']
 SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
 
 
