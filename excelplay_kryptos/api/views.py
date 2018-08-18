@@ -57,7 +57,7 @@ def exchange_token(request, backend):
             )
 
 def test(request):
-    response = {'success': request.user.email}
+    response = {'success': KryptosUser.objects.all()[0].user_id.email}
     return JsonResponse(response)
 
 @api_view(['GET'])
@@ -104,3 +104,22 @@ def answer(request):
         response = {'error': 'User not found'}
     finally:
         return Response(response)
+
+@api_view(['GET'])
+def leaderboard(request):
+    leaderboard = []
+    users = KryptosUser.objects.all()
+    for row, user in enumerate(users):
+        name = user.user_id.first_name + " " + user.user_id.last_name
+        leaderboard.append({"rank":row+1,
+        "name":name,
+        "level":user.level})
+    return Response({"leaderboard":leaderboard})
+
+@api_view(['GET'])
+def user_rank(request):
+    users = KryptosUser.objects.all()
+    for row, user in enumerate(users):
+        if user.user_id.username == request.user.username:
+            return Response({'rank':row+1})
+            

@@ -32,13 +32,17 @@ class KryptosUser(models.Model):
     user_id = models.OneToOneField(User,primary_key=True, on_delete=models.CASCADE)
     level = models.IntegerField(default=1)
     rank = models.IntegerField(default=10000)
+    created_at = models.DateTimeField(auto_now_add=True, editable=True)
+    updated_at = models.DateTimeField(auto_now=True, editable=True)
+
+    class Meta:
+        ordering = ['-level', 'updated_at']
 
     def __str__(self):
-        return str(self.rank)
+        return str(self.user_id.email)
 
-@receiver(post_save, sender=User)
-def build_kryptos_user_model(sender, instance, created, **kwargs):
-    if created:
-        kryptos = KryptosUser(user_id=instance)
-        kryptos.save()
-
+    @receiver(post_save, sender=User)
+    def build_kryptos_user_model(sender, instance, created, **kwargs):
+        if created:
+	        kryptos = KryptosUser(user_id=instance)
+	        kryptos.save()
