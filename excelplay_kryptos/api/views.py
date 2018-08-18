@@ -73,19 +73,20 @@ def profile(request):
 @api_view(['GET'])
 def ask(request):
 
-    # TODO: Fetch user level from DB
     user_level = KryptosUser.objects.get(user_id=request.user.id).level
     try:
         level = Level.objects.filter(level=user_level)[0]
         response = {
             'level': user_level,
-            'source_hint': level.source_hint
+            'source_hint': level.source_hint,
+            'data type': level.filetype,
+            'data url': level.level_file.url
         }
         return Response(response)
-    except:
+    except Exception as e:
+        print (e)
         return Response({"level":"finished"})
 
-@csrf_exempt
 @api_view(['POST'])
 def answer(request):
     answer = request.data['answer']
@@ -122,4 +123,3 @@ def user_rank(request):
     for row, user in enumerate(users):
         if user.user_id.username == request.user.username:
             return Response({'rank':row+1})
-            

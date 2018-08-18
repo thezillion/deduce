@@ -14,16 +14,16 @@ from django.dispatch import receiver
 # 		return self.username
 
 class Level(models.Model):
-    #options = (
-    #    ('A', 'Audio'),
-    #    ('I', 'Image'),
-    #    ('G', 'Gif'),
-    #)
+	options = (
+	('A', 'Audio'),
+	('I', 'Image'),
+	('G', 'Gif'),
+	)
 	level = models.IntegerField(default =1)
 	answer = models.TextField()
 	source_hint = models.TextField(blank=True,null=True)
-	#level_file =  models.FileField(upload_to = 'level_images/',null=True)
-	#filetype = models.CharField(max_length = 10,choices=options,default='Audio')
+	level_file =  models.FileField(upload_to = 'level_files/',null=True)
+	filetype = models.CharField(max_length = 10,choices=options,default='Image')
 	def __str__(self):
 		return str(self.level)
 
