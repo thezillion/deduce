@@ -78,7 +78,7 @@ TEMPLATES = [
 
 REST_FRAMEWORK = {
     # 'DEFAULT_AUTHENTICATION_CLASSES': (
-    #     'rest_framework.authentication.TokenAuthentication',
+    #     'rest_framework.authentication.SessionAuthentication',
     # ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -125,6 +125,7 @@ SOCIAL_AUTH_PIPELINE = (
   'social_core.pipeline.social_auth.associate_user',
   'social_core.pipeline.social_auth.load_extra_data',
   'social_core.pipeline.user.user_details',
+  'api.pipeline.get_avatar',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -138,7 +139,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "-x4mkRdOxCgE0WBflW2Pn5cQ"
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['email', 'profile']
 SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name', 'email', 'profile']
-SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = False
 
 
 # Password validation
