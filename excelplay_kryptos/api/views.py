@@ -6,6 +6,7 @@ from .models import Level, KryptosUser, Profile
 from .serializers import SocialSerializer
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
+from django.utils import timezone
 
 from requests.exceptions import HTTPError
 from rest_framework import status, serializers
@@ -84,13 +85,18 @@ def ask(request):
     level = Level.objects.filter(level=user_level)[0]
     try:
         level = Level.objects.filter(level=user_level)[0]
+        site = request.META['HTTP_HOST']
         file = ""
+        image = ""
         if level.level_file: file=level.level_file.url
+        if level.level_image: image=level.level_image.url
         response = {
             'level': user_level,
             'source_hint': level.source_hint,
-            'data type': level.filetype,
-            'data url': file
+            'data_type': level.filetype,
+            'data_url': file,
+            'image': image,
+            'timestamp':timezone.now().timestamp()
         }
         return Response(response)
     except Exception as e:
