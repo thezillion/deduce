@@ -133,7 +133,6 @@ def leaderboard(request):
         name = user.user_id.first_name + " " + user.user_id.last_name
         leaderboard.append({
         "username":username,
-        "profile_picture":user.user_id.profile_picture,
         "rank":row+1,
         "name":name,
         "level":user.level})
