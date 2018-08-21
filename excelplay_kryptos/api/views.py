@@ -60,7 +60,9 @@ def exchange_token(request, backend):
             )
 
 
+@api_view(['GET'])
 def user_logout(request):
+    Token.objects.get(user=request.user).delete()
     logout(request)
     return JsonResponse({'logout': True})
 
