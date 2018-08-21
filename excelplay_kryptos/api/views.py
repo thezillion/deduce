@@ -96,7 +96,7 @@ def ask(request):
             'data_type': level.filetype,
             'data_url': file,
             'image': image,
-            'timestamp':timezone.now().timestamp()
+            'timestamp':timezone.now()
         }
         return Response(response)
     except Exception as e:
@@ -122,7 +122,9 @@ def answer(request):
     finally:
         return Response(response)
 
+
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def leaderboard(request):
     leaderboard = []
     users = KryptosUser.objects.all()
@@ -131,6 +133,7 @@ def leaderboard(request):
         name = user.user_id.first_name + " " + user.user_id.last_name
         leaderboard.append({
         "username":username,
+        "profile_picture":user.user_id.profile_picture,
         "rank":row+1,
         "name":name,
         "level":user.level})

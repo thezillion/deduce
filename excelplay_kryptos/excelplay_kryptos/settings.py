@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'api',
     'social_django',
-    'corsheaders'
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
