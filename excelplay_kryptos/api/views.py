@@ -18,6 +18,7 @@ from rest_framework.response import Response
 from social_django.utils import psa
 # Create your views here.
 
+
 @api_view(http_method_names=['POST'])
 @permission_classes([AllowAny])
 @psa()
@@ -31,7 +32,8 @@ def exchange_token(request, backend):
             nfe = 'non_field_errors'
 
         try:
-            user = request.backend.do_auth(serializer.validated_data['access_token'])
+            user = request.backend.do_auth(
+                serializer.validated_data['access_token'])
         except HTTPError as e:
             return Response(
                 {'errors': {
@@ -42,10 +44,10 @@ def exchange_token(request, backend):
             )
         if user:
             if user.is_active:
-                # token, _ = Token.objects.get_or_create(user=user)
+                token = Token.objects.get_or_create(user=user)[0]
                 # return Response({'token': token.key})
                 login(request=request, user=user)
-                return Response({'login':True})
+                return Response({'login': True, 'token': token.key})
             else:
                 return Response(
                     {'errors': {nfe: 'This user account is inactive'}},
@@ -57,13 +59,16 @@ def exchange_token(request, backend):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+
 def user_logout(request):
     logout(request)
-    return JsonResponse({'logout':True})
+    return JsonResponse({'logout': True})
+
 
 def test(request):
     response = {'success': KryptosUser.objects.all()[0].user_id.email}
     return JsonResponse(response)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -73,10 +78,11 @@ def profile(request):
     last_name = profile.user_id.last_name
     email = profile.user_id.email
     profile_picture = profile.profile_picture
-    return Response({'first name':first_name,
-    'last name':last_name,
-    'email':email,
-    'profle':profile_picture})
+    return Response({'first_name': first_name,
+                     'last_name': last_name,
+                     'email': email,
+                     'profile': profile_picture})
+
 
 @api_view(['GET'])
 def ask(request):
@@ -88,20 +94,23 @@ def ask(request):
         site = request.META['HTTP_HOST']
         file = ""
         image = ""
-        if level.level_file: file=level.level_file.url
-        if level.level_image: image=level.level_image.url
+        if level.level_file:
+            file = level.level_file.url
+        if level.level_image:
+            image = level.level_image.url
         response = {
             'level': user_level,
             'source_hint': level.source_hint,
             'data_type': level.filetype,
             'data_url': file,
             'image': image,
-            'timestamp':timezone.now()
+            'timestamp': timezone.now()
         }
         return Response(response)
     except Exception as e:
-        print (e)
-        return Response({"level":"finished"})
+        print(e)
+        return Response({"level": "finished"})
+
 
 @api_view(['POST'])
 def answer(request):
@@ -117,7 +126,7 @@ def answer(request):
         else:
             response = {'answer': 'Wrong'}
     except Exception as e:
-        print (e)
+        print(e)
         response = {'error': 'User not found'}
     finally:
         return Response(response)
@@ -132,15 +141,16 @@ def leaderboard(request):
         username = user.user_id.username
         name = user.user_id.first_name + " " + user.user_id.last_name
         leaderboard.append({
-        "username":username,
-        "rank":row+1,
-        "name":name,
-        "level":user.level})
-    return Response({"leaderboard":leaderboard})
+            "username": username,
+            "rank": row+1,
+            "name": name,
+            "level": user.level})
+    return Response({"leaderboard": leaderboard})
+
 
 @api_view(['GET'])
 def user_rank(request):
     users = KryptosUser.objects.all()
     for row, user in enumerate(users):
         if user.user_id.username == request.user.username:
-            return Response({'rank':row+1})
+            return Response({'rank': row+1})
