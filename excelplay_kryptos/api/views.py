@@ -65,13 +65,12 @@ def user_logout(request):
     return JsonResponse({'logout': True})
 
 
-def test(request):
-    response = {'success': KryptosUser.objects.all()[0].user_id.email}
-    return JsonResponse(response)
+@api_view(['GET'])
+def check(request):
+    return Response(True)
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def profile(request):
     profile = Profile.objects.get(user_id=request.user.id)
     first_name = profile.user_id.first_name
