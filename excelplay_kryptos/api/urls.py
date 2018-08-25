@@ -7,7 +7,7 @@ urlpatterns = [
     path('profile/', views.profile),
     path('leaderboard/', views.leaderboard),
     path('rank/', views.user_rank),
-    path('test/', views.test),
+    path('session_check/', views.check),
     path('ask/', views.ask),
     path('answer/', views.answer),
     re_path(r'social/(?P<backend>[^/]+)/$', views.exchange_token),
