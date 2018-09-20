@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from .models import Level, KryptosUser, Profile
 from .serializers import SocialSerializer
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
 
@@ -89,7 +90,7 @@ def profile(request):
 def ask(request):
 
     user_level = KryptosUser.objects.get(user_id=request.user.id).level
-    level = Level.objects.filter(level=user_level)[0]
+
     try:
         level = Level.objects.filter(level=user_level)[0]
         site = request.META['HTTP_HOST']
@@ -109,7 +110,7 @@ def ask(request):
         }
         return Response(response)
     except Exception as e:
-        print(e)
+        print('error',e)
         return Response({"level": "finished"})
 
 
