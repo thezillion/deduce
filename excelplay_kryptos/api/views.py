@@ -140,14 +140,19 @@ def leaderboard(request):
     leaderboard = []
     users = KryptosUser.objects.all()
     for row, user in enumerate(users):
+        print(user.user_id)
+        profile = Profile.objects.get(user_id=user.user_id)
+        profile_picture = profile.profile_picture
         username = user.user_id.username
         name = user.user_id.first_name + " " + user.user_id.last_name
         leaderboard.append({
             "username": username,
             "rank": row+1,
             "name": name,
-            "level": user.level})
+            "level": user.level,
+            "profile": profile_picture})
     return Response({"leaderboard": leaderboard})
+
 
 
 @api_view(['GET'])
