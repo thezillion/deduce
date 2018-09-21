@@ -4,7 +4,7 @@ def get_avatar(backend, strategy, details, response,
     url = None
     if backend.name == 'google-oauth2':
         url = response['image'].get('url')
-        ext = url.split('.')[-1]
+        url = url[:-2] + '250'
     if url:
         print(user, user.id)
         obj = Profile.objects.get(user_id=user.id)

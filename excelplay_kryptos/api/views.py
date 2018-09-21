@@ -88,7 +88,7 @@ def profile(request):
 
 @api_view(['GET'])
 def ask(request):
-
+    base_url = settings.BASE_URL
     user_level = KryptosUser.objects.get(user_id=request.user.id).level
 
     try:
@@ -97,9 +97,9 @@ def ask(request):
         file = ""
         image = ""
         if level.level_file:
-            file = level.level_file.url
+            file = base_url+level.level_file.url
         if level.level_image:
-            image = level.level_image.url
+            image = base_url+level.level_image.url
         response = {
             'level': user_level,
             'source_hint': level.source_hint,
