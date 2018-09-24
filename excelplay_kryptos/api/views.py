@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
+import json, datetime
 
 from requests.exceptions import HTTPError
 from rest_framework import status, serializers
@@ -122,6 +123,12 @@ def answer(request):
         kuser = KryptosUser.objects.get(user_id=user)
         level = Level.objects.get(level=kuser.level)
         if answer.lower() == level.answer.lower():
+            #Log answer submission timestamp
+            answer_log = json.loads(kuser.answer_log)
+            answer_log[str(level)] = str(datetime.datetime.now())
+            new_log = json.dumps(answer_log)
+
+            kuser.answer_log = new_log
             kuser.level += 1
             kuser.save()
             response = {'answer': 'Correct'}

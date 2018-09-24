@@ -36,6 +36,7 @@ class KryptosUser(models.Model):
     # TODO: Bring user ID from auth
     user_id = models.OneToOneField(User,primary_key=True, on_delete=models.CASCADE)
     level = models.IntegerField(default=1)
+    answer_log = models.TextField(default={})
     created_at = models.DateTimeField(auto_now_add=True, editable=True)
     updated_at = models.DateTimeField(auto_now=True, editable=True)
 
