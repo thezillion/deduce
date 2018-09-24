@@ -12,4 +12,5 @@ urlpatterns = [
     path('answer/', views.answer),
     re_path(r'social/(?P<backend>[^/]+)/$', views.exchange_token),
     path('logout/', views.user_logout),
+    path('conversation/', views.conversation),
 ]

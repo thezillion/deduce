@@ -154,10 +154,58 @@ def leaderboard(request):
     return Response({"leaderboard": leaderboard})
 
 
-
 @api_view(['GET'])
 def user_rank(request):
     users = KryptosUser.objects.all()
     for row, user in enumerate(users):
         if user.user_id.username == request.user.username:
             return Response({'rank': row+1})
+
+@api_view(['GET'])
+def conversation(request):
+    try:
+        user = User.objects.get(id=request.user.id)
+        kuser = KryptosUser.objects.get(user_id=user)
+        user_level = kuser.level
+
+        if user_level == 1:
+            file = open("dialogues/prologue.txt", "r")
+            content = file.read()
+            response = {"isAvailable":"true",
+            "content":content,
+            "type":"prologue"
+            }
+            file.close()
+
+        elif user_level == 10:
+            print("true")
+            file = open("dialogues/conversation1.txt", "r")
+            content = file.read()
+            response = {"isAvailable":"true",
+            "content":content,
+            "type":"prologue"
+            }
+            file.close()
+        elif user_level == 20:
+            print("true")
+            file = open("dialogues/conversation1.txt", "r")
+            content = file.read()
+            response = {"isAvailable":"true",
+            "content":content,
+            "type":"prologue"
+            }
+            file.close()
+        elif user_level == 30:
+            print("true")
+            file = open("dialogues/conversation1.txt", "r")
+            content = file.read()
+            response = {"isAvailable":"true",
+            "content":content,
+            "type":"prologue"
+            }
+            file.close()
+        else:
+            response = {"isAvailable":"false"}
+        return Response(response)
+    except:
+        return Response('none')
